@@ -688,92 +688,9 @@ Pacman.Map = function (size) {
     };
 };
 
-Pacman.Audio = function(game) {
-    
-    var files          = [], 
-        endEvents      = [],
-        progressEvents = [],
-        playing        = [];
-    
-    function load(name, path, cb) { 
-
-        var f = files[name] = document.createElement("audio");
-
-        progressEvents[name] = function(event) { progress(event, name, cb); };
-        
-        f.addEventListener("canplaythrough", progressEvents[name], true);
-        f.setAttribute("preload", "true");
-        f.setAttribute("autobuffer", "true");
-        f.setAttribute("src", path);
-        f.pause();        
-    };
-
-    function progress(event, name, callback) { 
-        if (event.loaded === event.total && typeof callback === "function") {
-            callback();
-            files[name].removeEventListener("canplaythrough", 
-                                            progressEvents[name], true);
-        }
-    };
-
-    function disableSound() {
-        for (var i = 0; i < playing.length; i++) {
-            files[playing[i]].pause();
-            files[playing[i]].currentTime = 0;
-        }
-        playing = [];
-    };
-
-    function ended(name) { 
-
-        var i, tmp = [], found = false;
-
-        files[name].removeEventListener("ended", endEvents[name], true);
-
-        for (i = 0; i < playing.length; i++) {
-            if (!found && playing[i]) { 
-                found = true;
-            } else { 
-                tmp.push(playing[i]);
-            }
-        }
-        playing = tmp;
-    };
-
-    function play(name) { 
-        if (!game.soundDisabled()) {
-            endEvents[name] = function() { ended(name); };
-            playing.push(name);
-            files[name].addEventListener("ended", endEvents[name], true);
-            files[name].play();
-        }
-    };
-
-    function pause() { 
-        for (var i = 0; i < playing.length; i++) {
-            files[playing[i]].pause();
-        }
-    };
-    
-    function resume() { 
-        for (var i = 0; i < playing.length; i++) {
-            files[playing[i]].play();
-        }        
-    };
-    
-    return {
-        "disableSound" : disableSound,
-        "load"         : load,
-        "play"         : play,
-        "pause"        : pause,
-        "resume"       : resume
-    };
-};
-
 var PACMAN = (function () {
 
     var state        = WAITING,
-        audio        = null,
         ghosts       = [],
         ghostSpecs   = ["#00FFDE", "#FF0000", "#FFB8DE", "#FFB847"],
         eatenCount   = 0,
@@ -818,7 +735,6 @@ var PACMAN = (function () {
         for (var i = 0; i < ghosts.length; i += 1) { 
             ghosts[i].reset();
         }
-        audio.play("start");
         timerStart = tick;
         setState(COUNTDOWN);
     }    
@@ -836,16 +752,13 @@ var PACMAN = (function () {
         if (e.keyCode === KEY.N) {
             startNewGame();
         } else if (e.keyCode === KEY.S) {
-            audio.disableSound();
             localStorage["soundDisabled"] = !soundDisabled();
         } else if (e.keyCode === KEY.P && state === PAUSE) {
-            audio.resume();
             map.draw(ctx);
             setState(stored);
         } else if (e.keyCode === KEY.P) {
             stored = state;
             setState(PAUSE);
-            audio.pause();
             map.draw(ctx);
             dialog("Paused");
         } else if (state !== PAUSE) {   
@@ -936,8 +849,7 @@ var PACMAN = (function () {
         for (i = 0, len = ghosts.length; i < len; i += 1) {
             if (collided(userPos, ghostPos[i]["new"])) {
                 if (ghosts[i].isVunerable()) { 
-                    audio.play("eatghost");
-                    ghosts[i].eat();
+                     ghosts[i].eat();
                     eatenCount += 1;
                     nScore = eatenCount * 50;
                     drawScore(nScore, ghostPos[i]);
@@ -945,7 +857,6 @@ var PACMAN = (function () {
                     setState(EATEN_PAUSE);
                     timerStart = tick;
                 } else if (ghosts[i].isDangerous()) {
-                    audio.play("die");
                     setState(DYING);
                     timerStart = tick;
                 }
@@ -1004,7 +915,6 @@ var PACMAN = (function () {
     }
 
     function eatenPill() {
-        audio.play("eatpill");
         timerStart = tick;
         eatenCount = 0;
         for (i = 0; i < ghosts.length; i += 1) {
@@ -1040,7 +950,6 @@ var PACMAN = (function () {
 
         ctx  = canvas.getContext('2d');
 
-        audio = new Pacman.Audio({"soundDisabled":soundDisabled});
         map   = new Pacman.Map(blockSize);
         user  = new Pacman.User({ 
             "completedLevel" : completedLevel, 
