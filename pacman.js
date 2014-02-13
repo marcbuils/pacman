@@ -1053,34 +1053,6 @@ var PACMAN = (function () {
         }
         
         map.draw(ctx);
-        dialog("Loading ...");
-
-        var extension = Modernizr.audio.ogg ? 'ogg' : 'mp3';
-
-        var audio_files = [
-            ["start", root + "audio/opening_song." + extension],
-            ["die", root + "audio/die." + extension],
-            ["eatghost", root + "audio/eatghost." + extension],
-            ["eatpill", root + "audio/eatpill." + extension],
-            ["eating", root + "audio/eating.short." + extension],
-            ["eating2", root + "audio/eating.short." + extension]
-        ];
-
-        load(audio_files, function() { loaded(); });
-    };
-
-    function load(arr, callback) { 
-        
-        if (arr.length === 0) { 
-            callback();
-        } else { 
-            var x = arr.pop();
-            audio.load(x[0], x[1], function() { load(arr, callback); });
-        }
-    };
-        
-    function loaded() {
-
         dialog("Press N to Start");
         
         document.addEventListener("keydown", keyDown, true);
