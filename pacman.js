@@ -1,3 +1,44 @@
+(function ($, _PACMAN) {
+
+$(function(){
+    var kKeys = [];
+    var $el = null;
+    var PACMAN = null;
+
+    $(document).keydown(function (e){
+        kKeys.push(e.keyCode);
+        if (kKeys.toString().indexOf("38,38,40,40,37,39,37,39,66,65") >= 0) {
+            kKeys = [];
+
+			if (!$el) {
+				// add necessary font
+				$('<style type="text/css">@font-face {font-family: "BDCartoonShoutRegular";src: url("data:application/octet-stream;base64,waAAAAYgAAABWY21hcJkhlecAAAO8AAAB3mN2dCASJRCMAAAIRAAAACZmcGdt67QvpwAABZwAAAJlZ2FzcAADAAcAAJLwAAAADGdseWZ36ZtmAAAJXAAAgZxoZWFk90hL0wAAAQwAAAA2aGhlYQ") format("truetype"); font-weight: normal;font-style: normal;}</style>').appendTo('body');
+
+				$el = $('<div style="border-radius: 20px; transition: left 0.5s ease; position: fixed; z-index: 10000; top: 50px; left: -442px; width: 442px; height: 450px; margin:20px auto;">').appendTo('body');
+				
+				PACMAN = _PACMAN();
+				PACMAN.init($el[0], "./");
+			}
+			
+			PACMAN.start();
+			$el.css('display', 'block');
+			
+			
+			setTimeout(function () {
+				$el.css('left', '0');
+			}, 500);
+        } else if ($el && e.keyCode === 27) {
+        	$el.css('left', '-442px');
+        	
+        	setTimeout(function () {
+        		PACMAN.stop();
+				$el.css('display', 'none');
+			}, 500);
+        }
+    });
+});
+
+}(jQuery, function () {
 /*jslint browser: true, undef: true, eqeqeq: true, nomen: true, white: true */
 /*global window: false, document: false */
 
@@ -963,15 +1004,24 @@ var PACMAN = (function () {
         
         map.draw(ctx);
         dialog("Press N to Start");
-        
-        document.addEventListener("keydown", keyDown, true);
-        document.addEventListener("keypress", keyPress, true); 
-        
+
         timer = window.setInterval(mainLoop, 1000 / Pacman.FPS);
     };
     
+    function start() {
+        document.addEventListener("keydown", keyDown, true);
+        document.addEventListener("keypress", keyPress, true); 
+    };
+    
+    function stop() {
+        document.removeEventListener("keydown", keyDown, true);
+        document.removeEventListener("keypress", keyPress, true); 
+    };
+    
     return {
-        "init" : init
+        "init" : init,
+        "start" : start,
+        "stop" : stop
     };
     
 }());
@@ -1148,3 +1198,7 @@ Object.prototype.clone = function () {
     }
     return newObj;
 };
+
+return PACMAN;
+}));
+
