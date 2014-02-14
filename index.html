@@ -5,17 +5,6 @@
     <title>HTML5 Pacman</title>
     
     <style type="text/css">
-      @font-face {
-	    font-family: 'BDCartoonShoutRegular';
-            src: url('data:application/octet-stream;base64,waAAAAYgAAABWY21hcJkhlecAAAO8AAAB3mN2dCASJRCMAAAIRAAAACZmcGdt67QvpwAABZwAAAJlZ2FzcAADAAcAAJLwAAAADGdseWZ36ZtmAAAJXAAAgZxoZWFk90hL0wAAAQwAAAA2aGhlYQ') format('truetype');
-	    font-weight: normal;
-	    font-style: normal;
-      }
-      #pacman {
-        height:450px;
-        width:342px;
-        margin:20px auto;
-      }
       #shim { 
         font-family: BDCartoonShoutRegular; 
         position:absolute;
@@ -33,26 +22,19 @@
   <div id="shim">shim for font face</div>
 
   <h1>HTML5 Pacman</h1>
+  
+  Press the following keys to show the Pacman game, and escape to hide it:
+  <ul><li>up up down down left right left right b a</li></ul>
 
   <a href="http://arandomurl.com/">Writeup</a> |
   Code on <a href="http://arandomurl.com/">Github</a>
+  
+  <div>
+  	Konami code system added by <a href="http://www.marcbuils.fr">Marc Buils</a> | Code on <a href="https://github.com/marcbuils/pacman">Github</a>
+  </div>
 
-  <div id="pacman"></div>
+  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
   <script src="pacman.js"></script>
-  <script src="modernizr-1.5.min.js"></script>
-
-  <script>
-
-    var el = document.getElementById("pacman");
-
-    if (Modernizr.canvas && Modernizr.localstorage && 
-        Modernizr.audio && (Modernizr.audio.ogg || Modernizr.audio.mp3)) {
-      window.setTimeout(function () { PACMAN.init(el, "./"); }, 0);
-    } else { 
-      el.innerHTML = "Sorry, needs a decent browser<br /><small>" + 
-        "(firefox 3.6+, Chrome 4+, Opera 10+ and Safari 4+)</small>";
-    }
-  </script>
 
 </body>
 </html>

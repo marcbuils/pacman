@@ -766,10 +766,6 @@ var PACMAN = (function () {
             x     = ((map.width * map.blockSize) - width) / 2;        
         ctx.fillText(text, x, (map.height * 10) + 8);
     }
-
-    function soundDisabled() {
-        return localStorage["soundDisabled"] === "true";
-    };
     
     function startLevel() {        
         user.resetPosition();
@@ -792,8 +788,6 @@ var PACMAN = (function () {
     function keyDown(e) {
         if (e.keyCode === KEY.N) {
             startNewGame();
-        } else if (e.keyCode === KEY.S) {
-            localStorage["soundDisabled"] = !soundDisabled();
         } else if (e.keyCode === KEY.P && state === PAUSE) {
             map.draw(ctx);
             setState(stored);
@@ -848,9 +842,9 @@ var PACMAN = (function () {
             ctx.fill();
         }
 
-        ctx.fillStyle = !soundDisabled() ? "#00FF00" : "#FF0000";
+        ctx.fillStyle = "#FF0000";
         ctx.font = "bold 16px sans-serif";
-        //ctx.fillText("♪", 10, textBase);
+        //ctx.fillText("���", 10, textBase);
         ctx.fillText("s", 10, textBase);
 
         ctx.fillStyle = "#FFFF00";
@@ -866,7 +860,7 @@ var PACMAN = (function () {
 
     function mainDraw() { 
 
-        var diff, u, i, len, nScore;
+        var u, i, len, nScore;
         
         ghostPos = [];
 
